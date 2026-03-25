@@ -59,7 +59,7 @@ services:
     volumes:
       - ./opengauss/data:/var/lib/opengauss
     healthcheck:
-      test: ['CMD', 'gsql', '-d', 'postgres', '-U', 'omm', '-c', 'SELECT 1']
+      test: ['CMD', '/usr/local/opengauss/bin/gsql', '-d', 'postgres', '-U', 'omm', '-c', 'SELECT 1']
       interval: 10s
       timeout: 5s
       retries: 10

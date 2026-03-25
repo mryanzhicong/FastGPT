@@ -14,7 +14,6 @@ export class OpenGaussVectorCtrl implements VectorControllerType {
     try {
       await connectOg();
       await OgClient.query(`
-        CREATE EXTENSION IF NOT EXISTS datavec;
         CREATE TABLE IF NOT EXISTS ${DatasetVectorTableName} (
             id BIGSERIAL PRIMARY KEY,
             vector VECTOR(1536) NOT NULL,

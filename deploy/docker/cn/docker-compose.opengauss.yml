@@ -49,6 +49,8 @@ services:
     container_name: opengauss
     restart: always
     privileged: true
+    ports: # 生产环境建议不要暴露
+      - 5432:5432
     networks:
       - fastgpt
     environment:
@@ -66,6 +68,8 @@ services:
     image: registry.cn-hangzhou.aliyuncs.com/fastgpt/mongo:5.0.32 # cpu 不支持 AVX 时候使用 4.4.29
     container_name: mongo
     restart: always
+    ports: # 生产环境建议不要暴露
+      - 27017:27017
     networks:
       - fastgpt
     command: mongod --keyFile /data/mongodb.key --replSet rs0
@@ -113,6 +117,8 @@ services:
   redis:
     image: registry.cn-hangzhou.aliyuncs.com/fastgpt/redis:7.2-alpine
     container_name: redis
+    ports: # 生产环境建议不要暴露
+      - 6379:6379
     networks:
       - fastgpt
     restart: always

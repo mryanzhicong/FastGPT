@@ -45,7 +45,7 @@ version: '3.3'
 services:
   # Vector DB - openGauss
   vectorDB:
-    image: opengauss/opengauss-server:7.0.0-RC2.B015
+    image: opengauss/opengauss-server:latest
     container_name: opengauss
     restart: always
     privileged: true
@@ -59,7 +59,7 @@ services:
     volumes:
       - ./opengauss/data:/var/lib/opengauss
     healthcheck:
-      test: ['CMD', '/usr/local/opengauss/bin/gsql', '-d', 'postgres', '-U', 'omm', '-c', 'SELECT 1']
+      test: ['CMD-SHELL', 'su - omm -c "gsql -d postgres -p 5432 -c \"SELECT 1\""']
       interval: 10s
       timeout: 5s
       retries: 10

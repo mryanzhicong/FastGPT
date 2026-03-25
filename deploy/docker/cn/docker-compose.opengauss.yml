@@ -39,7 +39,7 @@ x-log-config: &x-log-config
 
 # 向量库相关配置（openGauss DataVec，使用独立环境变量）
 x-vec-config: &x-vec-config
-  OPENGAUSS_URL: postgresql://gaussdb:openGauss@123@opengauss:5432/postgres
+  OPENGAUSS_URL: postgresql://gaussdb:FastGPT2026@opengauss:5432/postgres
 
 version: '3.3'
 services:
@@ -55,7 +55,11 @@ services:
       - fastgpt
     environment:
       # 密码必须包含大写、小写、数字和特殊字符，且长度不少于8位
-      - GS_PASSWORD=openGauss@123
+      - GS_PASSWORD=openGauss12#$
+      # 自动创建的数据库连接用户
+      - GS_USERNAME=gaussdb
+      # gaussdb 用户密码（不含 URL 特殊字符，方便连接串使用）
+      - GS_USER_PASSWORD=FastGPT2026
     volumes:
       - ./opengauss/data:/var/lib/opengauss
     healthcheck:

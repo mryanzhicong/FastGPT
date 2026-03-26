@@ -1,14 +1,14 @@
 import { delay } from '@fastgpt/global/common/system/utils';
 import { getLogger, LogCategories } from '../../logger';
-import { Pool } from 'pg-opengauss';
-import type { QueryResultRow } from 'pg-opengauss';
+import { Pool } from 'pg';
+import type { QueryResultRow } from 'pg';
 import { OPENGAUSS_ADDRESS } from '../constants';
 
 const logger = getLogger(LogCategories.INFRA.VECTOR);
 
 export const connectOg = async (): Promise<Pool> => {
-  if (global.ogClient) {
-    return global.ogClient;
+  if (global.pgClient) {
+    return global.pgClient;
   }
 
   const pool = new Pool({
@@ -24,26 +24,26 @@ export const connectOg = async (): Promise<Pool> => {
     allowExitOnIdle: false,
     application_name: 'fastgpt-vector-db'
   });
-  global.ogClient = pool;
+  global.pgClient = pool;
 
-  global.ogClient.on('error', async (err) => {
+  global.pgClient.on('error', async (err) => {
     logger.error('openGauss pool error', { error: err });
   });
-  global.ogClient.on('connect', async () => {
+  global.pgClient.on('connect', async () => {
     logger.info('openGauss pool connected');
   });
-  global.ogClient.on('remove', async () => {
+  global.pgClient.on('remove', async () => {
     logger.warn('openGauss connection removed from pool');
   });
 
   try {
-    await global.ogClient.connect();
-    return global.ogClient;
+    await global.pgClient.connect();
+    return global.pgClient;
   } catch (error) {
     logger.error('openGauss connection failed', { error });
-    global.ogClient?.removeAllListeners();
-    global.ogClient?.end();
-    global.ogClient = null;
+    global.pgClient?.removeAllListeners();
+    global.pgClient?.end();
+    global.pgClient = null;
 
     await delay(1000);
     logger.warn('openGauss reconnecting after failure');

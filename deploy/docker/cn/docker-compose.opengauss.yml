@@ -25,7 +25,7 @@ x-share-db-config: &x-share-db-config
   STORAGE_SECRET_ACCESS_KEY: minioadmin
   STORAGE_PUBLIC_BUCKET: fastgpt-public
   STORAGE_PRIVATE_BUCKET: fastgpt-private
-  STORAGE_EXTERNAL_ENDPOINT: http://192.168.0.2:9000 # 一个服务器和客户端均可访问到存储桶的地址，可以是固定的宿主机 IP 或者域名，注意不要填写成 127.0.0.1 或者 localhost 等本地回环地址(因为容器里无法使用)
+  STORAGE_EXTERNAL_ENDPOINT: http://192.168.230.241:9000 # 一个服务器和客户端均可访问到存储桶的地址，可以是固定的宿主机 IP 或者域名，注意不要填写成 127.0.0.1 或者 localhost 等本地回环地址(因为容器里无法使用)
   STORAGE_S3_ENDPOINT: http://fastgpt-minio:9000 # 协议://域名(IP):端口
   STORAGE_S3_FORCE_PATH_STYLE: true
   STORAGE_S3_MAX_RETRIES: 3
@@ -49,8 +49,6 @@ services:
     container_name: opengauss
     restart: always
     privileged: true
-    ports: # 生产环境建议不要暴露
-      - 5432:5432
     networks:
       - fastgpt
     environment:
@@ -70,8 +68,6 @@ services:
     image: registry.cn-hangzhou.aliyuncs.com/fastgpt/mongo:5.0.32 # cpu 不支持 AVX 时候使用 4.4.29
     container_name: mongo
     restart: always
-    ports: # 生产环境建议不要暴露
-      - 27017:27017
     networks:
       - fastgpt
     command: mongod --keyFile /data/mongodb.key --replSet rs0
@@ -119,8 +115,6 @@ services:
   redis:
     image: registry.cn-hangzhou.aliyuncs.com/fastgpt/redis:7.2-alpine
     container_name: redis
-    ports: # 生产环境建议不要暴露
-      - 6379:6379
     networks:
       - fastgpt
     restart: always
@@ -232,8 +226,6 @@ services:
   code-sandbox:
     container_name: code-sandbox
     image: registry.cn-hangzhou.aliyuncs.com/fastgpt/fastgpt-sandbox:v4.14.9.3
-    ports: # 生产环境建议不要暴露
-      - 3002:3000
     networks:
       - fastgpt
     restart: always
@@ -291,8 +283,6 @@ services:
     image: registry.cn-hangzhou.aliyuncs.com/fastgpt/fastgpt-plugin:v0.5.5
     container_name: fastgpt-plugin
     restart: always
-    ports: # 生产环境建议不要暴露
-      - 3003:3000
     networks:
       - fastgpt
     environment:
@@ -317,8 +307,6 @@ services:
     image: registry.cn-hangzhou.aliyuncs.com/labring/aiproxy:v0.3.5
     container_name: aiproxy
     restart: unless-stopped
-    ports: # 生产环境建议不要暴露
-      - 3010:3000
     depends_on:
       aiproxy_pg:
         condition: service_healthy
@@ -347,8 +335,6 @@ services:
     image: registry.cn-hangzhou.aliyuncs.com/fastgpt/pgvector:0.8.0-pg15 # docker hub
     restart: unless-stopped
     container_name: aiproxy_pg
-    ports: # 生产环境建议不要暴露
-      - 5433:5432
     volumes:
       - ./aiproxy_pg:/var/lib/postgresql/data
     networks:
